@@ -18,7 +18,7 @@ describe("HexTech Presale Contract", function () {
     WhitelistedHexTechPresale = await ethers.getContractFactory("WhitelistedHexTechPresale");
     
     HexTechToken = await ethers.getContractFactory("HexTechToken");
-    instanceHexTechToken = await HexTechToken.deploy();
+    instanceHexTechToken = await HexTechToken.deploy("HXT", "Hextech Token");
 
     WETHToken = await ethers.getContractFactory("WETHToken");
     instanceWETHToken = await WETHToken.deploy();
