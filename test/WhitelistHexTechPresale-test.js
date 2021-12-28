@@ -1,7 +1,4 @@
 const { expect } = require("chai");
-
-
-const abi = require("../scripts/abi/uniswapV2Router.json");
 const { ethers } = require("hardhat");
 
 describe("HexTech Presale Contract", function () {
@@ -10,8 +7,6 @@ describe("HexTech Presale Contract", function () {
   let instanceWhitelistedHexTechPresale;
   let HexTechToken;
   let instanceHexTechToken;
-  let USDCToken;
-  let instanceUSDCToken;
   let WETHToken;
   let instanceWETHToken;
   let owner;
@@ -22,20 +17,11 @@ describe("HexTech Presale Contract", function () {
 
     WhitelistedHexTechPresale = await ethers.getContractFactory("WhitelistedHexTechPresale");
     
-
     HexTechToken = await ethers.getContractFactory("HexTechToken");
     instanceHexTechToken = await HexTechToken.deploy();
 
-    USDCToken = await ethers.getContractFactory("USDCToken");
-    instanceUSDCToken = await USDCToken.deploy();
-
     WETHToken = await ethers.getContractFactory("WETHToken");
     instanceWETHToken = await WETHToken.deploy();
-
-    const provider = new ethers.providers.JsonRpcProvider();
-    const UniswapV2Router02Address = "0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff";
-    const UniswapV2Router = new ethers.Contract(UniswapV2Router02Address, abi, provider);
-    const uniswapV2Router = await UniswapV2Router.connect(owner);
 
   });
 

@@ -21,13 +21,6 @@ async function main() {
 
   console.log("HexTechToken deployed to:", hexTechToken.address);
 
-  const USDCToken = await hre.ethers.getContractFactory("USDCToken");
-  const usdcToken = await USDCToken.deploy();
-
-  await usdcToken.deployed();
-
-  console.log("USDCToken deployed to:", usdcToken.address);
-
   const WETHToken = await hre.ethers.getContractFactory("WETHToken");
   const wethToken = await WETHToken.deploy();
 
