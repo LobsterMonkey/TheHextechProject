@@ -125,10 +125,8 @@ describe("HexTech Presale Contract", function () {
       // Deploy WhitelistedHexTechPresale instance
       instanceWhitelistedHexTechPresale = await WhitelistedHexTechPresale.deploy(450,owner.address,instanceHexTechToken.address,instanceWETHToken.address);
 
-      // Mint HexTech Tokens to presale contract
-      const amountHexTech = ethers.utils.parseUnits('6000', 'ether');
-      await instanceHexTechToken.grantRole(ethers.utils.id("MINTER_ROLE"),owner.address);
-      await instanceHexTechToken.mint(instanceWhitelistedHexTechPresale.address, amountHexTech); 
+      // Grant MINTER_ROLE to presale contract
+      await instanceHexTechToken.grantRole(ethers.utils.id("MINTER_ROLE"),instanceWhitelistedHexTechPresale.address);
 
       // Initialize current block
       currentBlock = await instanceWhitelistedHexTechPresale.getCurrentBlock();
