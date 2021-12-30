@@ -1579,7 +1579,7 @@ contract HexTechPresale is ReentrancyGuard, Context, Ownable {
     function startICO(uint _endBlock, uint _minPurchase, uint _maxPurchase, uint _availableTokens, uint256 _softCap, uint256 _hardCap, uint256 _poolPercent) external onlyOwner icoNotActive() {
 
         require(_endBlock > block.number, 'Pre-Sale: duration should be > 0');
-        require(_availableTokens > 0 && _availableTokens <= token.totalSupply(), 'Pre-Sale: availableTokens should be > 0 and <= totalSupply');
+        require(_availableTokens > 0, 'Pre-Sale: availableTokens should be > 0');
         require(_poolPercent > 0 && _poolPercent <= 100, 'Pre-Sale: poolPercent should be > 0 and <= 100');
         require(_minPurchase > 0, 'Pre-Sale: _minPurchase should > 0');
         require(_maxPurchase > _minPurchase, 'Pre-Sale: _maxPurchase should be > _minPurchase');
