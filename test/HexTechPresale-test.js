@@ -17,7 +17,7 @@ describe("HexTech Presale Contract", function () {
 
     [owner, addr1, addr2, addr3, addr4, addr5] = await ethers.getSigners();
 
-    HexTechPresale = await ethers.getContractFactory("HexTechPresale");
+    HexTechPresale = await ethers.getContractFactory("contracts/HexTechPresale.sol:HexTechPresale");
 
     HexTechToken = await ethers.getContractFactory("HexTechToken");
     instanceHexTechToken = await HexTechToken.deploy("HXT", "Hextech Token");
@@ -125,6 +125,7 @@ describe("HexTech Presale Contract", function () {
 
       // Mint HexTech Tokens to presale contract
       const amountHexTech = ethers.utils.parseUnits('6000', 'ether');
+      await instanceHexTechToken.grantRole(ethers.utils.id("MINTER_ROLE"),owner.address);
       await instanceHexTechToken.mint(instanceHexTechPresale.address, amountHexTech); 
 
       // Initialize current block

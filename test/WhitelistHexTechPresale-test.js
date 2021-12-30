@@ -127,6 +127,7 @@ describe("HexTech Presale Contract", function () {
 
       // Mint HexTech Tokens to presale contract
       const amountHexTech = ethers.utils.parseUnits('6000', 'ether');
+      await instanceHexTechToken.grantRole(ethers.utils.id("MINTER_ROLE"),owner.address);
       await instanceHexTechToken.mint(instanceWhitelistedHexTechPresale.address, amountHexTech); 
 
       // Initialize current block
