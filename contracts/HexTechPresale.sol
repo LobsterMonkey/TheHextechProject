@@ -1521,7 +1521,7 @@ contract HexTechPresale is ReentrancyGuard, Context, Ownable {
 
     uint256 public poolPercent;
 
-    uint256 private weiRaised;
+    uint256 public weiRaised;
     uint256 public endICO;
     uint256 public startICOBlock = 0;
 
