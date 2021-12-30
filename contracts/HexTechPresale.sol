@@ -1495,28 +1495,33 @@ interface IUniswapV2Router02 is IUniswapV2Router01 {
     ) external;
 }
 
+interface IHexTechToken is IERC20 {
+
+    function mint(address to, uint256 amount) external;
+
+}
+
 contract HexTechPresale is ReentrancyGuard, Context, Ownable {
     /* AggregatorV3Interface internal priceFeed; */
 
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
 
-    uint256 public _rate;
-    IERC20 private _token;
-    address private _wallet;
+    uint256 public rate;
+    IHexTechToken private token;
+    address private wallet;
 
     // Testnet: 0x0aECd741C69bBAa3920D4C6a32A2b01087677EE6
     // Mainnet: 0x55d398326f99059fF775485246999027B3197955 (BSC_USD)
-    address private _wethAddress;
-    IERC20 private _weth;
+    address private wethAddress;
+    IERC20 private weth;
 
     uint256 public softCap;
     uint256 public hardCap;
 
     uint256 public poolPercent;
 
-    uint256 private _price;
-    uint256 private _weiRaised;
+    uint256 private weiRaised;
     uint256 public endICO;
     uint256 public startICOBlock = 0;
 
@@ -1535,20 +1540,21 @@ contract HexTechPresale is ReentrancyGuard, Context, Ownable {
 
     event TokensPurchased(address indexed purchaser, address indexed beneficiary, uint256 value, uint256 amount);
 
-    constructor (uint256 rate, address wallet, IERC20 token, address wethAddress) {
+    constructor (uint256 _rate, address _wallet, IHexTechToken _token, address _wethAddress) {
 
-        require(rate > 0, "Pre-Sale: rate is 0");
-        require(wallet != address(0), "Pre-Sale: wallet is the zero address");
-        require(address(token) != address(0), "Pre-Sale: token is the zero address");
+        require(_rate > 0, "Pre-Sale: rate is 0");
+        require(_wallet != address(0), "Pre-Sale: wallet is the zero address");
+        require(address(_token) != address(0), "Pre-Sale: token is the zero address");
     
-        _rate = rate;
-        _wallet = wallet;
-        _token = token;
-        _wethAddress = wethAddress;
+        rate = _rate;
+        wallet = _wallet;
+        token = _token;
+
+        wethAddress = _wethAddress;
 
         // WETH Token
-        IERC20 weth = IERC20(wethAddress);
-        _weth = weth;
+        IERC20 _weth = IERC20(_wethAddress);
+        weth = _weth;
 
         // PancakeSwap Router address:
         // (BSC testnet) 0xD99D1c33F9fC3444f8101754aBC46c52416550D1
@@ -1570,10 +1576,10 @@ contract HexTechPresale is ReentrancyGuard, Context, Ownable {
     }
 
     //Start Pre-Sale
-    function startICO(uint endBlock, uint _minPurchase, uint _maxPurchase, uint _availableTokens, uint256 _softCap, uint256 _hardCap, uint256 _poolPercent) external onlyOwner icoNotActive() {
+    function startICO(uint _endBlock, uint _minPurchase, uint _maxPurchase, uint _availableTokens, uint256 _softCap, uint256 _hardCap, uint256 _poolPercent) external onlyOwner icoNotActive() {
 
-        require(endBlock > block.number, 'Pre-Sale: duration should be > 0');
-        require(_availableTokens > 0 && _availableTokens <= _token.totalSupply(), 'Pre-Sale: availableTokens should be > 0 and <= totalSupply');
+        require(_endBlock > block.number, 'Pre-Sale: duration should be > 0');
+        require(_availableTokens > 0 && _availableTokens <= token.totalSupply(), 'Pre-Sale: availableTokens should be > 0 and <= totalSupply');
         require(_poolPercent > 0 && _poolPercent <= 100, 'Pre-Sale: poolPercent should be > 0 and <= 100');
         require(_minPurchase > 0, 'Pre-Sale: _minPurchase should > 0');
         require(_maxPurchase > _minPurchase, 'Pre-Sale: _maxPurchase should be > _minPurchase');
@@ -1581,7 +1587,7 @@ contract HexTechPresale is ReentrancyGuard, Context, Ownable {
         require(_hardCap > _softCap, 'Pre-Sale: _hardCap should be > _softCap');
 
         startICOBlock = block.number;
-        endICO = endBlock;
+        endICO = _endBlock;
         poolPercent = _poolPercent;
         availableTokensICO = _availableTokens.mul(_poolPercent).div(10**2);
 
@@ -1590,6 +1596,8 @@ contract HexTechPresale is ReentrancyGuard, Context, Ownable {
 
         softCap = _softCap;
         hardCap = _hardCap;
+
+        token.mint(address(this), _availableTokens);
     }
 
     function stopICO() external onlyOwner icoActive() {
@@ -1600,7 +1608,7 @@ contract HexTechPresale is ReentrancyGuard, Context, Ownable {
     }
 
     function _presaleResult() internal {
-        if(_weiRaised >= softCap) {
+        if(weiRaised >= softCap) {
 
           presaleResult = true;
         } else {
@@ -1630,20 +1638,20 @@ contract HexTechPresale is ReentrancyGuard, Context, Ownable {
 
         address beneficiary = msg.sender;
 
-        require(amount < _weth.allowance(beneficiary, address(this)), 'You need to approve WETH');
+        require(amount < weth.allowance(beneficiary, address(this)), 'You need to approve WETH');
 
         uint256 weiAmount = amount;
         _preValidatePurchase(beneficiary, weiAmount);
         uint256 tokens = _getTokenAmount(weiAmount);
 
-        _weiRaised = _weiRaised.add(weiAmount);
+        weiRaised = weiRaised.add(weiAmount);
         availableTokensICO = availableTokensICO.sub(tokens);
 
         Claimed[beneficiary] = false;
         CoinPaid[beneficiary] = CoinPaid[beneficiary].add(weiAmount);
         TokenBought[beneficiary] = TokenBought[beneficiary].add(tokens);
 
-        require(_weth.transferFrom(beneficiary, address(this), weiAmount), 'Transfer failed');
+        require(weth.transferFrom(beneficiary, address(this), weiAmount), 'Transfer failed');
 
         emit TokensPurchased(_msgSender(), beneficiary, weiAmount, tokens);        
     }
@@ -1655,7 +1663,7 @@ contract HexTechPresale is ReentrancyGuard, Context, Ownable {
         require(weiAmount >= minPurchase, 'have to send at least: minPurchase');
         require(weiAmount <= maxPurchase, 'have to send max: maxPurchase');
         require(CoinPaid[beneficiary].add(weiAmount) <= maxPurchase, 'cannot contribute more than maxPurchase');
-        require(_weiRaised.add(weiAmount) <= hardCap, 'hardcap has been reached');
+        require(weiRaised.add(weiAmount) <= hardCap, 'hardcap has been reached');
 
         this;
     }
@@ -1682,12 +1690,12 @@ contract HexTechPresale is ReentrancyGuard, Context, Ownable {
         require(CoinPaid[beneficiary] > 0, "Pre-Sale: You didn't buy any tokens!");
         Claimed[beneficiary] = true;
 
-        _weth.transfer(beneficiary, CoinPaid[beneficiary]);
+        weth.transfer(beneficiary, CoinPaid[beneficiary]);
     }
 
     function _deliverTokens(address beneficiary, uint256 tokenAmount) internal {
 
-        _token.transfer(beneficiary, tokenAmount);
+        token.transfer(beneficiary, tokenAmount);
     }
 
 
@@ -1699,39 +1707,39 @@ contract HexTechPresale is ReentrancyGuard, Context, Ownable {
 
     function _getTokenAmount(uint256 weiAmount) internal view returns (uint256) {
 
-        return weiAmount.mul(_rate);
+        return weiAmount.mul(rate);
     }
 
     function withdraw() external onlyOwner {
 
         require(address(this).balance > 0, 'Pre-Sale: Contract has no money');
-        payable(_wallet).transfer(address(this).balance);
+        payable(wallet).transfer(address(this).balance);
     }
 
-    function withdrawErc20(IERC20 token) external onlyOwner {
-        require(token.transfer(_wallet, token.balanceOf(address(this))), "Transfer failed");
+    function withdrawErc20(IERC20 _token) external onlyOwner {
+        require(_token.transfer(wallet, _token.balanceOf(address(this))), "Transfer failed");
     }
 
     function getToken() public view returns (IERC20) {
 
-        return _token;
+        return token;
     }
 
 
     function getWallet() public view returns (address) {
 
-        return _wallet;
+        return wallet;
     }
 
 
     function getRate() public view returns (uint256) {
 
-        return _rate;
+        return rate;
     }
 
     function setRate(uint256 newRate) public onlyOwner icoNotActive() {
 
-        _rate = newRate;
+        rate = newRate;
     }
 
     function setAvailableTokensICO(uint256 amount) public onlyOwner icoNotActive() {
@@ -1743,11 +1751,6 @@ contract HexTechPresale is ReentrancyGuard, Context, Ownable {
 
         return availableTokensICO;
     } 
-
-    function weiRaised() public view returns (uint256) {
-
-        return _weiRaised;
-    }
 
     modifier icoActive() {
 
