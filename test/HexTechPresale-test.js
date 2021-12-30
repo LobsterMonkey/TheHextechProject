@@ -123,10 +123,8 @@ describe("HexTech Presale Contract", function () {
       // Deploy HexTechPresale instance
       instanceHexTechPresale = await HexTechPresale.deploy(450,owner.address,instanceHexTechToken.address,instanceWETHToken.address);
 
-      // Mint HexTech Tokens to presale contract
-      const amountHexTech = ethers.utils.parseUnits('6000', 'ether');
-      await instanceHexTechToken.grantRole(ethers.utils.id("MINTER_ROLE"),owner.address);
-      await instanceHexTechToken.mint(instanceHexTechPresale.address, amountHexTech); 
+      // Grant MINTER_ROLE to presale contract
+      await instanceHexTechToken.grantRole(ethers.utils.id("MINTER_ROLE"),instanceHexTechPresale.address);
 
       // Initialize current block
       currentBlock = await instanceHexTechPresale.getCurrentBlock();
@@ -184,21 +182,7 @@ describe("HexTech Presale Contract", function () {
           softcap,
           hardcap,
           poolPercent
-        )).to.be.revertedWith('Pre-Sale: availableTokens should be > 0 and <= totalSupply');
-      });
-  
-      it("should revert startICO bcs availableTokens should be <= totalSupply()", async function () {
-  
-  
-        await expect(instanceHexTechPresale.startICO(
-          endBlock,
-          minPurchase,
-          maxPurchase,
-          (await instanceHexTechToken.totalSupply()).toString() + 1,
-          softcap,
-          hardcap,
-          poolPercent
-        )).to.be.revertedWith('Pre-Sale: availableTokens should be > 0 and <= totalSupply');
+        )).to.be.revertedWith('Pre-Sale: availableTokens should be > 0');
       });
   
       it("should revert startICO bcs softcap should be > 0", async function () {

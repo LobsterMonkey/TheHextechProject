@@ -186,21 +186,7 @@ describe("HexTech Presale Contract", function () {
           softcap,
           hardcap,
           poolPercent
-        )).to.be.revertedWith('Pre-Sale: availableTokens should be > 0 and <= totalSupply');
-      });
-  
-      it("should revert startICO bcs availableTokens should be <= totalSupply()", async function () {
-  
-  
-        await expect(instanceWhitelistedHexTechPresale.startICO(
-          endBlock,
-          minPurchase,
-          maxPurchase,
-          (await instanceHexTechToken.totalSupply()).toString() + 1,
-          softcap,
-          hardcap,
-          poolPercent
-        )).to.be.revertedWith('Pre-Sale: availableTokens should be > 0 and <= totalSupply');
+        )).to.be.revertedWith('Pre-Sale: availableTokens should be > 0');
       });
   
       it("should revert startICO bcs softcap should be > 0", async function () {
