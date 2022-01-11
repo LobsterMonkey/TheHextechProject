@@ -457,10 +457,10 @@ contract HexTechPresale is ReentrancyGuard, Context, Ownable {
     function withdrawWethOrSaleToken() external onlyOwner icoNotActive {
         if(weiRaised >= softCap) {
         // Transfer out weth as sale is successful
-        weth.transfer(wallet, weth.balanceOf(this));
+        weth.transfer(wallet, weth.balanceOf(address(this)));
         } else {
         // Transfer out hex token as sale failed
-        token.transfer(wallet, token.balanceOf(this));
+        token.transfer(wallet, token.balanceOf(address(this)));
         }
     }
 
