@@ -340,7 +340,11 @@ contract HexTechPresale is ReentrancyGuard, Context, Ownable {
         softCap = _softCap;
         hardCap = _hardCap;
 
-        token.mint(address(this), _availableTokens);
+        // Mint the tokens used in the presale to the presale contract
+        token.mint(address(this), availableTokensICO);
+
+        // Mint the rest to the wallet, as they are not used in the presale contract
+        token.mint(wallet, _availableTokens.sub(availableTokensICO));
     }
 
     function stopICO() external onlyOwner icoActive() {
@@ -480,11 +484,6 @@ contract HexTechPresale is ReentrancyGuard, Context, Ownable {
     function setRate(uint256 newRate) public onlyOwner icoNotActive() {
 
         rate = newRate;
-    }
-
-    function setAvailableTokensICO(uint256 amount) public onlyOwner icoNotActive() {
-
-        availableTokensICO = amount;
     }
 
     function getAvailableTokensICO() public view returns (uint256) {
