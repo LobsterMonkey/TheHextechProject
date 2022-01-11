@@ -1673,7 +1673,7 @@ contract HexTechToken is ERC20, AccessControlEnumerable {
     }
 
     function _partialBurn(address from, uint256 amount) internal returns (uint256) {
-        uint256 burnAmount = _calculateBurnAmount(amount);
+        uint256 burnAmount = _calculateBurnAmount(from, amount);
 
         if (burnAmount > 0) {
             _burn(from, burnAmount);
