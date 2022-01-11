@@ -340,24 +340,24 @@ contract HexTechPresale is ReentrancyGuard, Context, Ownable {
 
     }
 
-    function getCurrentBlock() public view returns (uint256) {
+    function getCurrentBlock() external view returns (uint256) {
         return block.number;
     }
     
-    function getEndICOBlock() public view returns (uint256) {
+    function getEndICOBlock() external view returns (uint256) {
         require(endICO > 0, "Error: Presale has finished already");
         
         return endICO;
     }
     
-    function getStartICOBlock() public view returns (uint256) {
+    function getStartICOBlock() external view returns (uint256) {
         require(startICOBlock > 0, "Error: Presale has not started yet");
         
         return startICOBlock;
     }
 
     //Pre-Sale
-    function buyTokens(uint256 amount) public nonReentrant icoActive {
+    function buyTokens(uint256 amount) external nonReentrant icoActive {
 
         address beneficiary = _msgSender();
 
@@ -386,7 +386,7 @@ contract HexTechPresale is ReentrancyGuard, Context, Ownable {
         this;
     }
 
-    function claimToken() public icoNotActive() {
+    function claimToken() external icoNotActive() {
 
         address beneficiary = _msgSender();
 
@@ -400,7 +400,7 @@ contract HexTechPresale is ReentrancyGuard, Context, Ownable {
 
     }
 
-    function claimRefund() public icoNotActive() {
+    function claimRefund() external icoNotActive() {
 
         address beneficiary = _msgSender();
 
@@ -446,29 +446,29 @@ contract HexTechPresale is ReentrancyGuard, Context, Ownable {
         }
     }
 
-    function getToken() public view returns (IERC20) {
+    function getToken() external view returns (IERC20) {
 
         return token;
     }
 
 
-    function getWallet() public view returns (address) {
+    function getWallet() external view returns (address) {
 
         return wallet;
     }
 
 
-    function getRate() public view returns (uint256) {
+    function getRate() external view returns (uint256) {
 
         return rate;
     }
 
-    function setRate(uint256 newRate) public onlyOwner icoNotActive() {
+    function setRate(uint256 newRate) external onlyOwner icoNotActive() {
 
         rate = newRate;
     }
 
-    function getAvailableTokensICO() public view returns (uint256) {
+    function getAvailableTokensICO() external view returns (uint256) {
 
         return availableTokensICO;
     } 
