@@ -296,13 +296,6 @@ contract HexTechPresale is ReentrancyGuard, Context, Ownable {
 
     }
 
-    receive() external payable {
-
-    }
-    fallback() external payable {
-
-    }
-
     //Start Pre-Sale
     function startICO(uint _endBlock, uint _minPurchase, uint _maxPurchase, uint _availableTokens, uint256 _softCap, uint256 _hardCap, uint256 _poolPercent) external onlyOwner icoNotActive() {
 
