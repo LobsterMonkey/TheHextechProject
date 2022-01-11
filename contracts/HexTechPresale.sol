@@ -255,7 +255,7 @@ contract HexTechPresale is ReentrancyGuard, Context, Ownable {
 
     // Testnet: 0x0aECd741C69bBAa3920D4C6a32A2b01087677EE6
     // Mainnet: 0x55d398326f99059fF775485246999027B3197955 (BSC_USD)
-    address private wethAddress;
+    address public wethAddress;
     IERC20 private weth;
 
     uint256 public softCap;
