@@ -244,7 +244,6 @@ interface IHexTechToken is IERC20 {
 }
 
 contract HexTechPresale is ReentrancyGuard, Context, Ownable {
-    /* AggregatorV3Interface internal priceFeed; */
 
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
@@ -277,9 +276,6 @@ contract HexTechPresale is ReentrancyGuard, Context, Ownable {
 
     bool public presaleResult;
 
-    // PancakeSwap(Uniswap) Router and Pair Address
-    IUniswapV2Router02 public immutable uniswapV2Router;
-
     event TokensPurchased(address indexed purchaser, address indexed beneficiary, uint256 value, uint256 amount);
 
     constructor (uint256 _rate, address _wallet, IHexTechToken _token, address _wethAddress) {
@@ -297,16 +293,6 @@ contract HexTechPresale is ReentrancyGuard, Context, Ownable {
         // WETH Token
         IERC20 _weth = IERC20(_wethAddress);
         weth = _weth;
-
-        // PancakeSwap Router address:
-        // (BSC testnet) 0xD99D1c33F9fC3444f8101754aBC46c52416550D1
-        // (BSC mainnet) V2 0x10ED43C718714eb63d5aA57B78B54704E256024E
-        IUniswapV2Router02 _uniswapV2Router = IUniswapV2Router02(0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff);
-        uniswapV2Router = _uniswapV2Router;
-        /* priceFeed = AggregatorV3Interface(0x2514895c72f50D8bd4B4F9b1110F0D6bD2c97526); */
-
-        // Grant the contract deployer the default admin role: it will be able
-        // to grant and revoke any roles
 
     }
 
@@ -375,8 +361,6 @@ contract HexTechPresale is ReentrancyGuard, Context, Ownable {
 
         address beneficiary = _msgSender();
 
-        require(amount < weth.allowance(beneficiary, address(this)), 'You need to approve WETH');
-
         uint256 weiAmount = amount;
         _preValidatePurchase(beneficiary, weiAmount);
         uint256 tokens = _getTokenAmount(weiAmount);
@@ -384,7 +368,6 @@ contract HexTechPresale is ReentrancyGuard, Context, Ownable {
         weiRaised = weiRaised.add(weiAmount);
         availableTokensICO = availableTokensICO.sub(tokens);
 
-        Claimed[beneficiary] = false;
         CoinPaid[beneficiary] = CoinPaid[beneficiary].add(weiAmount);
         TokenBought[beneficiary] = TokenBought[beneficiary].add(tokens);
 
