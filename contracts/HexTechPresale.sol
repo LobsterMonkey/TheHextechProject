@@ -395,8 +395,6 @@ contract HexTechPresale is ReentrancyGuard, Context, Ownable {
 
     function _preValidatePurchase(address beneficiary, uint256 weiAmount) internal virtual view {
 
-        require(beneficiary != address(0), "Pre-Sale: beneficiary is the zero address");
-        require(weiAmount != 0, "Pre-Sale: weiAmount is 0");
         require(weiAmount >= minPurchase, 'You have to send at least: minPurchase');
         require(weiAmount <= maxPurchase, 'You have to send max: maxPurchase');
         require(CoinPaid[beneficiary].add(weiAmount) <= maxPurchase, 'You cannot contribute more than maxPurchase');
