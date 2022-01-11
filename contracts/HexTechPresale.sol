@@ -368,7 +368,7 @@ contract HexTechPresale is ReentrancyGuard, Context, Ownable {
     //Pre-Sale
     function buyTokens(uint256 amount) public nonReentrant icoActive {
 
-        address beneficiary = msg.sender;
+        address beneficiary = _msgSender();
 
         require(amount < weth.allowance(beneficiary, address(this)), 'You need to approve WETH');
 
@@ -402,7 +402,7 @@ contract HexTechPresale is ReentrancyGuard, Context, Ownable {
 
     function claimToken() public icoNotActive() {
 
-        address beneficiary = msg.sender;
+        address beneficiary = _msgSender();
 
         require(weiRaised >= softCap, "Softcap not reached");
         require(presaleResult == true, "Pre-Sale has not concluded: Cannot claim token");
@@ -416,7 +416,7 @@ contract HexTechPresale is ReentrancyGuard, Context, Ownable {
 
     function claimRefund() public icoNotActive() {
 
-        address beneficiary = msg.sender;
+        address beneficiary = _msgSender();
 
         require(weiRaised < softCap, "Softcap reached");
         require(presaleResult == false, "Pre-Sale has concluded: Cannot claim refund");
