@@ -366,7 +366,7 @@ contract HexTechPresale is ReentrancyGuard, Context, Ownable {
     }
 
     //Pre-Sale
-    function buyTokens(uint256 amount) public nonReentrant icoActive payable {
+    function buyTokens(uint256 amount) public nonReentrant icoActive {
 
         address beneficiary = msg.sender;
 
