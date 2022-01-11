@@ -450,8 +450,14 @@ contract HexTechPresale is ReentrancyGuard, Context, Ownable {
         payable(wallet).transfer(address(this).balance);
     }
 
-    function withdrawErc20(IERC20 _token) external onlyOwner {
-        require(_token.transfer(wallet, _token.balanceOf(address(this))), "Transfer failed");
+    function withdrawWethOrSaleToken() external onlyOwner icoNotActive {
+        if(weiRaised >= softCap) {
+        // Transfer out weth as sale is successful
+        weth.transfer(wallet, weth.balanceOf(this));
+        } else {
+        // Transfer out hex token as sale failed
+        token.transfer(wallet, token.balanceOf(this));
+        }
     }
 
     function getToken() public view returns (IERC20) {
