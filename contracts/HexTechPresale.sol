@@ -322,6 +322,7 @@ contract HexTechPresale is ReentrancyGuard, Context, Ownable {
 
         require(startICOBlock == 0, 'Presale has already started');
         require(_endBlock > block.number, 'Pre-Sale: duration should be > 0');
+        require(_endBlock.sub(block.number) <= 200000, 'Pre-Sale: duration is too long');
         require(_availableTokens > 0, 'Pre-Sale: availableTokens should be > 0');
         require(_poolPercent > 0 && _poolPercent <= 100, 'Pre-Sale: poolPercent should be > 0 and <= 100');
         require(_minPurchase > 0, 'Pre-Sale: _minPurchase should > 0');
