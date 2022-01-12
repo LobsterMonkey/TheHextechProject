@@ -249,6 +249,7 @@ contract HexTechPresale is ReentrancyGuard, Context, Ownable {
     using SafeERC20 for IERC20;
 
     uint256 public rate;
+    uint256 private ratePrecision = 1000000;
     IHexTechToken private token;
     address private wallet;
 
@@ -393,7 +394,6 @@ contract HexTechPresale is ReentrancyGuard, Context, Ownable {
         address beneficiary = _msgSender();
 
         require(weiRaised >= softCap, "Softcap not reached");
-        require(presaleResult == true, "Pre-Sale has not concluded: Cannot claim token");
         require(Claimed[beneficiary] == false, "Pre-Sale: You did claim your tokens!");
         require(TokenBought[beneficiary] > 0, "Pre-Sale: You didn't buy any tokens!");
         Claimed[beneficiary] = true;
@@ -408,7 +408,6 @@ contract HexTechPresale is ReentrancyGuard, Context, Ownable {
         address beneficiary = _msgSender();
 
         require(weiRaised < softCap, "Softcap reached");
-        require(presaleResult == false, "Pre-Sale has concluded: Cannot claim refund");
         require(Claimed[beneficiary] == false, "Pre-Sale: You did claim your refund!");
         require(CoinPaid[beneficiary] > 0, "Pre-Sale: You didn't buy any tokens!");
         Claimed[beneficiary] = true;
