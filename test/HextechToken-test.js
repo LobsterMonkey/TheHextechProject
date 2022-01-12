@@ -44,7 +44,7 @@ describe("Hextech Token Contract", function () {
         await instanceHexTechToken.connect(addr1).mint(addr1.address, ethers.utils.parseUnits("1000","ether"));
 
         await instanceHexTechToken.grantRole(ethers.utils.id("BURNER_ROLE"),addr1.address);
-        await instanceHexTechToken.connect(addr1).burn(addr1.address, ethers.utils.parseUnits("500","ether"));
+        await instanceHexTechToken.connect(addr1).burn(ethers.utils.parseUnits("500","ether"));
 
         expect(await instanceHexTechToken.balanceOf(addr1.address)).to.be.equal(ethers.utils.parseUnits("500","ether"));
     });
@@ -53,7 +53,7 @@ describe("Hextech Token Contract", function () {
         await instanceHexTechToken.grantRole(ethers.utils.id("MINTER_ROLE"),addr1.address);
         await instanceHexTechToken.connect(addr1).mint(addr1.address, ethers.utils.parseUnits("1000","ether"));
 
-        await expect(instanceHexTechToken.connect(addr1).burn(addr1.address, ethers.utils.parseUnits("500","ether"))).to.be.revertedWith('AccessControl: account 0x70997970c51812dc3a010c7d01b50e0d17dc79c8 is missing role 0x3c11d16cbaffd01df69ce1c404f6340ee057498f5f00246190ea54220576a848');
+        await expect(instanceHexTechToken.connect(addr1).burn(ethers.utils.parseUnits("500","ether"))).to.be.revertedWith('AccessControl: account 0x70997970c51812dc3a010c7d01b50e0d17dc79c8 is missing role 0x3c11d16cbaffd01df69ce1c404f6340ee057498f5f00246190ea54220576a848');
     });
 
     it("should burn 1% of transfer", async function () {
