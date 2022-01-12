@@ -281,9 +281,7 @@ contract HexTechPresale is ReentrancyGuard, Context, Ownable {
     event ICOEnded(uint endICO);
     event TokensClaimed(address indexed beneficiary, uint256 amount);
     event RefundClaimed(address indexed beneficiary, uint256 amount);
-    event Withdraw(address indexed purchaser, address indexed beneficiary, uint256 value, uint256 amount);
     event WethOrSaleTokenWithdrawn(address indexed purchaser, address indexed beneficiary, uint256 value, uint256 amount);
-    event TokensPurchased(address indexed purchaser, address indexed beneficiary, uint256 value, uint256 amount);
 
     constructor (uint256 _rate, address _wallet, IHexTechToken _token, address _wethAddress) {
 
