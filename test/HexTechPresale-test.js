@@ -133,6 +133,33 @@ describe("HexTech Presale Contract", function () {
 
     describe("Reverts", function () {
 
+      it.only("should revert startICO bcs you cannot startICO more than once", async function () {
+      
+        
+        await instanceHexTechPresale.startICO(
+          endBlock,
+          minPurchase,
+          maxPurchase,
+          availableTokens,
+          softcap,
+          hardcap,
+          poolPercent
+        );
+
+        await instanceHexTechPresale.stopICO();
+
+        await expect(instanceHexTechPresale.startICO(
+          endBlock,
+          minPurchase,
+          maxPurchase,
+          availableTokens,
+          softcap,
+          hardcap,
+          poolPercent
+        )).to.be.revertedWith('Presale has already started');
+
+      });
+
       it("should revert startICO bcs endBlock is before current block", async function () {
       
         await expect(instanceHexTechPresale.startICO(
