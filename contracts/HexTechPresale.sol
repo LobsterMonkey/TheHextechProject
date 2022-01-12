@@ -276,6 +276,13 @@ contract HexTechPresale is ReentrancyGuard, Context, Ownable {
 
     bool public presaleResult;
 
+    event TokensPurchased(address indexed beneficiary, uint256 value, uint256 amount);
+    event ICOStarted(uint startICOBlock, uint endBlock, uint minPurchase, uint maxPurchase, uint availableTokens, uint availableTokensICO, uint256 softCap, uint256 hardCap, uint256 poolPercent);
+    event ICOEnded(uint endICO);
+    event TokensClaimed(address indexed beneficiary, uint256 amount);
+    event RefundClaimed(address indexed beneficiary, uint256 amount);
+    event Withdraw(address indexed purchaser, address indexed beneficiary, uint256 value, uint256 amount);
+    event WethOrSaleTokenWithdrawn(address indexed purchaser, address indexed beneficiary, uint256 value, uint256 amount);
     event TokensPurchased(address indexed purchaser, address indexed beneficiary, uint256 value, uint256 amount);
 
     constructor (uint256 _rate, address _wallet, IHexTechToken _token, address _wethAddress) {
@@ -325,11 +332,15 @@ contract HexTechPresale is ReentrancyGuard, Context, Ownable {
 
         // Mint the rest to the wallet, as they are not used in the presale contract
         token.mint(wallet, _availableTokens.sub(availableTokensICO));
+
+        emit ICOStarted(startICOBlock, endICO, minPurchase, maxPurchase, _availableTokens, availableTokensICO, softCap, hardCap, poolPercent);
     }
 
     function stopICO() external onlyOwner icoActive() {
 
         endICO = 0;
+
+        emit ICOEnded(endICO);
 
     }
 
@@ -366,7 +377,7 @@ contract HexTechPresale is ReentrancyGuard, Context, Ownable {
 
         require(weth.transferFrom(beneficiary, address(this), weiAmount), 'Transfer failed');
 
-        emit TokensPurchased(_msgSender(), beneficiary, weiAmount, tokens);        
+        emit TokensPurchased(beneficiary, weiAmount, tokens);        
     }
 
     function _preValidatePurchase(address beneficiary, uint256 weiAmount) internal virtual view {
@@ -391,6 +402,7 @@ contract HexTechPresale is ReentrancyGuard, Context, Ownable {
 
         _processPurchase(beneficiary, TokenBought[beneficiary]);
 
+        emit TokensClaimed(beneficiary, TokenBought[beneficiary]);
     }
 
     function claimRefund() external icoNotActive() {
@@ -404,6 +416,8 @@ contract HexTechPresale is ReentrancyGuard, Context, Ownable {
         Claimed[beneficiary] = true;
 
         weth.transfer(beneficiary, CoinPaid[beneficiary]);
+
+        emit RefundClaimed(beneficiary, CoinPaid[beneficiary]);
     }
 
     function _deliverTokens(address beneficiary, uint256 tokenAmount) internal {
@@ -431,11 +445,18 @@ contract HexTechPresale is ReentrancyGuard, Context, Ownable {
 
     function withdrawWethOrSaleToken() external onlyOwner icoNotActive {
         if(weiRaised >= softCap) {
-        // Transfer out weth as sale is successful
-        weth.transfer(wallet, weth.balanceOf(address(this)));
+            // Transfer out weth as sale is successful
+            uint256 withdrawWethAmount = weth.balanceOf(address(this));
+            weth.transfer(wallet, withdrawWethAmount);
+
+            emit WethOrSaleTokenWithdrawn(wallet, weth, withdrawWethAmount);
+
         } else {
-        // Transfer out hex token as sale failed
-        token.transfer(wallet, token.balanceOf(address(this)));
+            // Transfer out hex token as sale failed
+            uint256 withdrawTokenAmount = token.balanceOf(address(this));
+            token.transfer(wallet, withdrawTokenAmount);
+
+            emit WethOrSaleTokenWithdrawn(wallet, token, withdrawTokenAmount);
         }
     }
 
