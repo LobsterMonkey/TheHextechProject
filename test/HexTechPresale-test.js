@@ -133,7 +133,7 @@ describe("HexTech Presale Contract", function () {
 
     describe("Reverts", function () {
 
-      it.only("should revert startICO bcs you cannot startICO more than once", async function () {
+      it("should revert startICO bcs you cannot startICO more than once", async function () {
       
         
         await instanceHexTechPresale.startICO(
