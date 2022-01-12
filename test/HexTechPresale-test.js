@@ -457,35 +457,28 @@ describe("HexTech Presale Contract", function () {
 
           });
 
-          it('should set presaleResult to true', async function () {
-            expect(await instanceHexTechPresale.presaleResult()).to.be.true;
+          it('should allow claimToken', async function () {
+            const tokenBought = await instanceHexTechPresale.TokenBought(addr1.address);
+            await instanceHexTechPresale.connect(addr1).claimToken();
+
+            expect(await instanceHexTechPresale.Claimed(addr1.address)).to.be.true;
+            expect(await instanceHexTechToken.balanceOf(addr1.address)).to.be.equal(tokenBought);
           });
 
-          describe('presaleResult == true', function () {
+          it('should not allow claimToken if you already claimed', async function () {
+            const tokenBought = await instanceHexTechPresale.TokenBought(addr1.address);
+            await instanceHexTechPresale.connect(addr1).claimToken();
 
-            it('should allow claimToken', async function () {
-              const tokenBought = await instanceHexTechPresale.TokenBought(addr1.address);
-              await instanceHexTechPresale.connect(addr1).claimToken();
+            await expect(instanceHexTechPresale.connect(addr1).claimToken()).to.be.revertedWith("Pre-Sale: You did claim your tokens!");
+            expect(await instanceHexTechToken.balanceOf(addr1.address)).to.be.equal(tokenBought);
+          });
 
-              expect(await instanceHexTechPresale.Claimed(addr1.address)).to.be.true;
-              expect(await instanceHexTechToken.balanceOf(addr1.address)).to.be.equal(tokenBought);
-            });
+          it('should not allow claimToken if you did not buyToken during presale', async function () {
+            await expect(instanceHexTechPresale.connect(addr4).claimToken()).to.be.revertedWith("Pre-Sale: You didn't buy any tokens!");
+          });
 
-            it('should not allow claimToken if you already claimed', async function () {
-              const tokenBought = await instanceHexTechPresale.TokenBought(addr1.address);
-              await instanceHexTechPresale.connect(addr1).claimToken();
-
-              await expect(instanceHexTechPresale.connect(addr1).claimToken()).to.be.revertedWith("Pre-Sale: You did claim your tokens!");
-              expect(await instanceHexTechToken.balanceOf(addr1.address)).to.be.equal(tokenBought);
-            });
-
-            it('should not allow claimToken if you did not buyToken during presale', async function () {
-              await expect(instanceHexTechPresale.connect(addr4).claimToken()).to.be.revertedWith("Pre-Sale: You didn't buy any tokens!");
-            });
-
-            it('should not allow claimRefund', async function () {
-              await expect(instanceHexTechPresale.connect(addr4).claimRefund()).to.be.revertedWith("Pre-Sale has concluded: Cannot claim refund");
-            });
+          it('should not allow claimRefund', async function () {
+            await expect(instanceHexTechPresale.connect(addr4).claimRefund()).to.be.revertedWith("Softcap reached");
           });
 
         });
@@ -512,36 +505,28 @@ describe("HexTech Presale Contract", function () {
 
           });
 
-          it('should keep presaleResult to false', async function () {
-            
-            expect(await instanceHexTechPresale.presaleResult()).to.be.false;
+          it('should allow claimRefund', async function () {
+            const coinPaid = await instanceHexTechPresale.CoinPaid(addr1.address);
+            await instanceHexTechPresale.connect(addr1).claimRefund();
+
+            expect(await instanceHexTechPresale.Claimed(addr1.address)).to.be.true;
+            expect(await instanceWETHToken.balanceOf(addr1.address)).to.be.equal(coinPaid);
           });
 
-          describe('presaleResult == false', function () {
+          it('should not allow claimRefund if you already claimed', async function () {
+            const coinPaid = await instanceHexTechPresale.CoinPaid(addr1.address);
+            await instanceHexTechPresale.connect(addr1).claimRefund();
 
-            it('should allow claimRefund', async function () {
-              const coinPaid = await instanceHexTechPresale.CoinPaid(addr1.address);
-              await instanceHexTechPresale.connect(addr1).claimRefund();
+            await expect(instanceHexTechPresale.connect(addr1).claimRefund()).to.be.revertedWith("Pre-Sale: You did claim your refund!");
+            expect(await instanceWETHToken.balanceOf(addr1.address)).to.be.equal(coinPaid);
+          });
 
-              expect(await instanceHexTechPresale.Claimed(addr1.address)).to.be.true;
-              expect(await instanceWETHToken.balanceOf(addr1.address)).to.be.equal(coinPaid);
-            });
+          it('should not allow claimRefund if you did not buyToken during presale', async function () {
+            await expect(instanceHexTechPresale.connect(addr4).claimRefund()).to.be.revertedWith("Pre-Sale: You didn't buy any tokens!");
+          });
 
-            it('should not allow claimRefund if you already claimed', async function () {
-              const coinPaid = await instanceHexTechPresale.CoinPaid(addr1.address);
-              await instanceHexTechPresale.connect(addr1).claimRefund();
-
-              await expect(instanceHexTechPresale.connect(addr1).claimRefund()).to.be.revertedWith("Pre-Sale: You did claim your refund!");
-              expect(await instanceWETHToken.balanceOf(addr1.address)).to.be.equal(coinPaid);
-            });
-
-            it('should not allow claimRefund if you did not buyToken during presale', async function () {
-              await expect(instanceHexTechPresale.connect(addr4).claimRefund()).to.be.revertedWith("Pre-Sale: You didn't buy any tokens!");
-            });
-
-            it('should not allow claimToken', async function () {
-              await expect(instanceHexTechPresale.connect(addr4).claimToken()).to.be.revertedWith("Pre-Sale has not concluded: Cannot claim token");
-            });
+          it('should not allow claimToken', async function () {
+            await expect(instanceHexTechPresale.connect(addr4).claimToken()).to.be.revertedWith("Softcap not reached");
           });
         });
       });
