@@ -168,7 +168,7 @@ describe("HexTech Presale Contract", function () {
         )).to.be.revertedWith("Pre-Sale: duration should be > 0");
       });
   
-      it.only("should revert startICO bcs endBlock is too far from startICOBlock", async function () {
+      it("should revert startICO bcs endBlock is too far from startICOBlock", async function () {
       
         await expect(instanceHexTechPresale.startICO(
           currentBlock.toNumber() + 300000,
@@ -355,11 +355,11 @@ describe("HexTech Presale Contract", function () {
           expect(await instanceWETHToken.balanceOf(instanceHexTechPresale.address)).to.be.equal(amountBuy);
         });
 
-        it('should not allow to buy 0', async function () {
+        it.only('should not allow to buy 0', async function () {
           const availableTokensICO = await instanceHexTechPresale.getAvailableTokensICO();
           const amountBuy = 0;
           
-          await expect(instanceHexTechPresale.buyTokens(amountBuy)).to.be.revertedWith('Pre-Sale: weiAmount is 0');
+          await expect(instanceHexTechPresale.buyTokens(amountBuy)).to.be.revertedWith('You have to send at least: minPurchase');
           expect(await instanceHexTechPresale.getAvailableTokensICO()).to.be.equal(availableTokensICO);
         });
 
