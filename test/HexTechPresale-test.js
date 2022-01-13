@@ -89,7 +89,7 @@ describe("HexTech Presale Contract", function () {
     });
 
     it("should revert claimToken bcs presale has not started yet", async function () {
-      await expect(instanceHexTechPresale.connect(addr1).claimToken()).to.be.revertedWith("Pre-Sale has not concluded: Cannot claim token");
+      await expect(instanceHexTechPresale.connect(addr1).claimToken()).to.be.revertedWith("Pre-Sale: You didn't buy any tokens!");
     });
 
     it("should revert claimRefund bcs presale has not started yet", async function () {
