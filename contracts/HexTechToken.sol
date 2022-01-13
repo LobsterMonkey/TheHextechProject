@@ -1661,11 +1661,11 @@ contract HexTechToken is ERC20, AccessControlEnumerable {
     }
 
     function burn(uint256 amount) external onlyRole(BURNER_ROLE) {
-        _burn(msg.sender, amount);
+        _burn(_msgSender(), amount);
     }
 
     function transfer(address to, uint256 amount) public virtual override returns (bool) {
-        return super.transfer(to, _partialBurn(msg.sender, amount));
+        return super.transfer(to, _partialBurn(_msgSender(), amount));
     }
 
     function transferFrom(address from, address to, uint256 amount) public virtual override returns (bool) {
