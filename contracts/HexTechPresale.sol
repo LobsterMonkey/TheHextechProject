@@ -407,9 +407,10 @@ contract HexTechPresale is ReentrancyGuard, Context, Ownable {
 
         address beneficiary = _msgSender();
 
+        require(CoinPaid[beneficiary] > 0, "Pre-Sale: You didn't buy any tokens!");
         require(weiRaised < softCap, "Softcap reached");
         require(Claimed[beneficiary] == false, "Pre-Sale: You did claim your refund!");
-        require(CoinPaid[beneficiary] > 0, "Pre-Sale: You didn't buy any tokens!");
+        
         Claimed[beneficiary] = true;
 
         weth.transfer(beneficiary, CoinPaid[beneficiary]);
