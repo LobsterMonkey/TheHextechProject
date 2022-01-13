@@ -355,7 +355,7 @@ describe("HexTech Presale Contract", function () {
           expect(await instanceWETHToken.balanceOf(instanceHexTechPresale.address)).to.be.equal(amountBuy);
         });
 
-        it.only('should not allow to buy 0', async function () {
+        it('should not allow to buy 0', async function () {
           const availableTokensICO = await instanceHexTechPresale.getAvailableTokensICO();
           const amountBuy = 0;
           
@@ -392,8 +392,9 @@ describe("HexTech Presale Contract", function () {
         it('should not allow people that havent approve WETH to buyTokens', async function () {
           const availableTokensICO = await instanceHexTechPresale.getAvailableTokensICO();
           const amountBuy = ethers.utils.parseUnits('1','ether');
+          await instanceWETHToken.mint(addr1.address,amountBuy);
 
-          await expect(instanceHexTechPresale.connect(addr1).buyTokens(amountBuy)).to.be.revertedWith('You need to approve WETH');
+          await expect(instanceHexTechPresale.connect(addr1).buyTokens(amountBuy)).to.be.revertedWith('ERC20: transfer amount exceeds allowance');
           expect(await instanceHexTechPresale.getAvailableTokensICO()).to.be.equal(availableTokensICO);
         });
 
