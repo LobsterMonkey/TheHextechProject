@@ -315,6 +315,18 @@ describe("HexTech Presale Contract", function () {
         it('should set the right poolpercent', async function () {
           expect(await instanceHexTechPresale.poolPercent()).to.be.equal(poolPercent);
         });
+
+        it('should mint the right amount of Tokens to the presale contract', async function () {
+          const availableTokensICO = await instanceHexTechPresale.getAvailableTokensICO();
+
+          expect(await instanceHexTechToken.balanceOf(instanceHexTechPresale.address)).to.be.equal(availableTokensICO);
+        });
+
+        it('should mint the right amount of Tokens to the wallet', async function () {
+          const availableTokensICO = await instanceHexTechPresale.getAvailableTokensICO();
+          
+          expect(await instanceHexTechToken.balanceOf(owner.address)).to.be.equal(availableTokens.sub(availableTokensICO));
+        });
       });
 
       describe("buyTokens()", function () {
