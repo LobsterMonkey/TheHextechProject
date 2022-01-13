@@ -499,7 +499,7 @@ describe("HexTech Presale Contract", function () {
           });
 
           it('should not allow claimRefund', async function () {
-            await expect(instanceHexTechPresale.connect(addr4).claimRefund()).to.be.revertedWith("Softcap reached");
+            await expect(instanceHexTechPresale.connect(addr1).claimRefund()).to.be.revertedWith("Softcap reached");
           });
 
           it('should withdraw all WETH as sale is successful', async function () {
