@@ -105,6 +105,10 @@ describe("HexTech Presale Contract", function () {
       await expect(instanceHexTechPresale.connect(addr1).claimRefund()).to.be.revertedWith("Pre-Sale: You didn't buy any tokens!");
     });
 
+    it.only("should revert bcs onlyOwner can withdraw funds", async function () {
+      await expect(instanceHexTechPresale.connect(addr1).withdrawWethOrSaleToken()).to.be.revertedWith("Ownable: caller is not the owner");
+    });
+
   });
 
   describe("Start Presale", function () {
@@ -425,6 +429,10 @@ describe("HexTech Presale Contract", function () {
         it('should not allow user to claimRefund when ico is active', async function () {
           await expect(instanceHexTechPresale.connect(addr1).claimRefund()).to.be.revertedWith('Pre-Sale: ICO should not be active');
         });
+
+        it.only('should not allow owner to withdraw funds', async function () {
+          await expect(instanceHexTechPresale.withdrawWethOrSaleToken()).to.be.revertedWith('Pre-Sale: ICO should not be active');
+        });
       });
 
       describe('stopICO()', function () {
@@ -481,6 +489,13 @@ describe("HexTech Presale Contract", function () {
             await expect(instanceHexTechPresale.connect(addr4).claimRefund()).to.be.revertedWith("Softcap reached");
           });
 
+          it.only('should withdraw all WETH as sale is successful', async function () {
+            const balance = await instanceWETHToken.balanceOf(owner.address);
+            const weiRaised = await instanceHexTechPresale.weiRaised();
+
+            await instanceHexTechPresale.withdrawWethOrSaleToken();
+            expect(await instanceWETHToken.balanceOf(owner.address)).to.be.equal(balance.add(weiRaised));
+          });
         });
 
         describe('if weiRaised < softCap', function () {
@@ -528,6 +543,15 @@ describe("HexTech Presale Contract", function () {
           it('should not allow claimToken', async function () {
             await expect(instanceHexTechPresale.connect(addr4).claimToken()).to.be.revertedWith("Softcap not reached");
           });
+
+          it.only('should withdraw all HXT as sale is not successful', async function () {
+            const balance = await instanceHexTechToken.balanceOf(owner.address);
+            const tokensInContract = await instanceHexTechToken.balanceOf(instanceHexTechPresale.address);
+
+            await instanceHexTechPresale.withdrawWethOrSaleToken();
+            expect(await instanceHexTechToken.balanceOf(owner.address)).to.be.equal(balance.add(tokensInContract));
+          });
+
         });
       });
     });
