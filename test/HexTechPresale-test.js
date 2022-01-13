@@ -80,15 +80,6 @@ describe("HexTech Presale Contract", function () {
       expect(await instanceHexTechPresale.getAvailableTokensICO()).to.be.equal(0);
     });
 
-    it("should revert bcs only owner can change availableTokensICO", async function () {
-      await expect(instanceHexTechPresale.connect(addr1).setAvailableTokensICO(45000)).to.be.revertedWith("Ownable: caller is not the owner");
-    });
-
-    it("should set a new amount of availableTokensICO", async function () {
-      await instanceHexTechPresale.setAvailableTokensICO(45000);
-      expect(await instanceHexTechPresale.getAvailableTokensICO()).to.be.equal(45000);
-    });
-
     it("should revert stopICO bcs presale has not started yet", async function () {
       await expect(instanceHexTechPresale.stopICO()).to.be.revertedWith("Pre-Sale: ICO must be active");
     });
@@ -416,10 +407,6 @@ describe("HexTech Presale Contract", function () {
 
         it('should not allow owner to change rate when ico is active', async function () {
           await expect(instanceHexTechPresale.setRate(400)).to.be.revertedWith('Pre-Sale: ICO should not be active');
-        });
-
-        it('should not allow owner to change availableTokensICO when ico is active', async function () {
-          await expect(instanceHexTechPresale.setAvailableTokensICO(ethers.utils.parseUnits('4000','ether'))).to.be.revertedWith('Pre-Sale: ICO should not be active');
         });
 
         it('should not allow user to claimTokens when ico is active', async function () {
