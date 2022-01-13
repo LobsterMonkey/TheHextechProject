@@ -168,6 +168,19 @@ describe("HexTech Presale Contract", function () {
         )).to.be.revertedWith("Pre-Sale: duration should be > 0");
       });
   
+      it.only("should revert startICO bcs endBlock is too far from startICOBlock", async function () {
+      
+        await expect(instanceHexTechPresale.startICO(
+          currentBlock.toNumber() + 300000,
+          minPurchase,
+          maxPurchase,
+          availableTokens,
+          softcap,
+          hardcap,
+          poolPercent
+        )).to.be.revertedWith("Pre-Sale: duration is too long");
+      });
+
       it("should revert startICO bcs minPurchase should be > 0", async function () {
   
         await expect(instanceHexTechPresale.startICO(
