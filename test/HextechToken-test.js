@@ -79,7 +79,8 @@ describe("Hextech Token Contract", function () {
         expect(await instanceHexTechToken.balanceOf(owner.address)).to.be.equal(ethers.utils.parseUnits("495","ether"));
     });
 
-    it("it should not burn 1% of transfer if made by minter", async function () {
+    it("it should not burn 1% of transfer if made by whitelisted fee role", async function () {
+        await instanceHexTechToken.grantRole(ethers.utils.id("WHITELISTED_FEE_ROLE"),owner.address);
         await instanceHexTechToken.grantRole(ethers.utils.id("MINTER_ROLE"),owner.address);
         await instanceHexTechToken.mint(owner.address, ethers.utils.parseUnits("1000","ether"));
         expect(await instanceHexTechToken.balanceOf(owner.address)).to.be.equal(ethers.utils.parseUnits("1000","ether"));

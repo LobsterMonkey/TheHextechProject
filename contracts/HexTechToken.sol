@@ -1652,6 +1652,7 @@ contract HexTechToken is ERC20, AccessControlEnumerable {
 
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
     bytes32 public constant BURNER_ROLE = keccak256("BURNER_ROLE");
+    bytes32 public constant WHITELISTED_FEE_ROLE = keccak256("WHITELISTED_FEE_ROLE");
     constructor(string memory name, string memory symbol) ERC20(name, symbol) {
          _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
     }
@@ -1685,7 +1686,7 @@ contract HexTechToken is ERC20, AccessControlEnumerable {
     function _calculateBurnAmount(address from, uint256 amount) internal view returns (uint256) {
         uint256 burnAmount = 0;
 
-        if (!hasRole(MINTER_ROLE, from)) {
+        if (!hasRole(WHITELISTED_FEE_ROLE, from)) {
             burnAmount = amount.div(100);
         }
 
