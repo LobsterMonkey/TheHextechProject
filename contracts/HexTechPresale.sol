@@ -45,7 +45,6 @@ contract HexTechPresale is ReentrancyGuard, Context, Ownable {
     using SafeERC20 for IERC20;
 
     uint256 public rate;
-    uint256 private ratePrecision = 1000000;
     IHexTechToken private token;
     address private wallet;
 
@@ -272,6 +271,8 @@ contract HexTechPresale is ReentrancyGuard, Context, Ownable {
     }
 
     function setRate(uint256 newRate) external onlyOwner icoNotActive() {
+
+        require(newRate > 0, "Pre-Sale: rate is 0");
 
         rate = newRate;
     }
