@@ -1665,12 +1665,8 @@ contract HexTechToken is ERC20, AccessControlEnumerable {
         _burn(_msgSender(), amount);
     }
 
-    function transfer(address to, uint256 amount) public virtual override returns (bool) {
-        return super.transfer(to, _partialBurn(_msgSender(), amount));
-    }
-
-    function transferFrom(address from, address to, uint256 amount) public virtual override returns (bool) {
-        return super.transferFrom(from, to, _partialBurn(from, amount));
+    function _transfer(address sender, address recipient, uint256 amount) internal virtual override {
+        super._transfer(sender, recipient, _partialBurn(sender, amount));
     }
 
     function _partialBurn(address from, uint256 amount) internal returns (uint256) {
